@@ -18,7 +18,10 @@ int main(int argc, char const *argv[]) {
 
 	for (i = 0; i < NUM_OF_BLOCKS; ++i)	{
 		for (j = 0; j < SIZE_OF_BLOCKS; ++j) {
-			fputc(0, fp);
+			if (j == 3)
+				fputc('F', fp);
+			else
+				fputc(j, fp);
 		}
 	}
 
