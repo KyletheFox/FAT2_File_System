@@ -2,15 +2,15 @@
 
 int main(int argc, char const *argv[]) {
 	
-	int i,j;
-	int fileTracker = 0;
-	int fd;
-	char *map;
-	char temp[2];
-	struct stat fileInfo;
-	struct FATentry entry;
-	struct FATentry fat[NUM_OF_BLOCKS * sizeof(struct FATentry)];
-	char blockArray[NUM_OF_BLOCKS][SIZE_OF_BLOCKS + 1];
+	int i,j;						// Loop Counters
+	int fileTracker = 0;			// Where the program is located in the file
+	int fd;							// File Pointer
+	char *map;						// Pointer for memory map
+	char temp[2];					// Temp array to convert int into char
+	struct stat fileInfo;			// Struct to hold all the File Metadata
+	struct FATentry entry;			// Temp entry obj to store into FAT Array
+	struct FATentry fat[NUM_OF_BLOCKS * sizeof(struct FATentry)];  	// Array to hold FAT
+	char blockArray[NUM_OF_BLOCKS][SIZE_OF_BLOCKS + 1];				// Array to hold Blocks
 
 	// Opens File
 	fd = open("FS.txt", O_RDWR);
@@ -57,9 +57,14 @@ int main(int argc, char const *argv[]) {
 
 	}
 
+	// --------------------------------------------------------------
+
+
+	// ---------------- Housecleaning -------------------------------
+
 	munmap(map, fileInfo.st_size);
-
 	close(fd);
-
 	return 0;
+
+	// --------------------------------------------------------------
 }
