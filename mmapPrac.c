@@ -9,7 +9,7 @@ int main(int argc, char const *argv[]) {
 	char temp[2];					// Temp array to convert int into char
 	struct stat fileInfo;			// Struct to hold all the File Metadata
 	struct FATentry entry;			// Temp entry obj to store into FAT Array
-	struct FATentry fat[NUM_OF_BLOCKS * sizeof(struct FATentry)];  	// Array to hold FAT
+	struct FATentry fat[NUM_OF_BLOCKS];  	// Array to hold FAT
 	char blockArray[NUM_OF_BLOCKS][SIZE_OF_BLOCKS + 1];				// Array to hold Blocks
 
 	// Opens File
@@ -26,11 +26,10 @@ int main(int argc, char const *argv[]) {
 
 	printf("---FAT----\n");
 
-	for (i = 0, j = 0; i < (NUM_OF_BLOCKS * sizeof(struct FATentry)); i+=2, j++)	{
-		fat[j].next = map[i];
-		fat[j].block = map[i+1];
-		fileTracker+=2;
-		printf("-------Entry: Block:%d Link:%d\n", fat[j].next, fat[j].block);
+	for (i = 0, j = 0; i < (NUM_OF_BLOCKS); i++, j++)	{
+		fat[j].link = map[i];
+		fileTracker+=1;
+		printf("-------Entry: BLink:%d\n", fat[j].link);
 	}
 
 	// -------------------------------------------------------------
