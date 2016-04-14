@@ -39,7 +39,7 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 
 	for (i = 0; i < sizeof(struct FileHead); ++i) {
 		if (i >= 0 && i <= 3) {
-			output->type += (int)disk[index];
+			output->type += disk[index];
 			if (i < 3)
 				output->type *= 10;				
 		}
@@ -49,19 +49,19 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 		}
 
 		if (i >= 16 && i <= 23) {
-			output->lastAccess += (int)disk[index];
+			output->lastAccess += disk[index];
 			if (i < 23)
 				output->lastAccess *= 10; 
 		}
 
 		if (i >= 24 && i <= 27) {
-			output->blockNum += (int)disk[index];
+			output->blockNum += disk[index];
 			if (i < 27)
 				output->blockNum *= 10;
 		}
 
 		if (i >= 28) {
-			output->size += (unsigned int)disk[index];
+			output->size += disk[index];
 			if (i < 31)
 				output->size *= 10;
 		}

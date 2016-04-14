@@ -24,7 +24,14 @@ int main(int argc, char const *argv[]) {
 
 	// Filling FAT Table
 	for (i = 0; i < NUM_OF_BLOCKS; ++i) {
-		fputc(0, fp);
+		if (i == 0) {
+			fputc(0x00, fp);
+			fputc(0x00, fp);
+		}
+		else {
+			fputc(0x99, fp);
+			fputc(0x99, fp);
+		}
 	}
 
 	// Filling in all the data blocks
@@ -66,6 +73,7 @@ int main(int argc, char const *argv[]) {
 		}
 	}
 
+	free(root.name);
 	fputc(EOF, fp);
 	fclose(fp);
 	return 0;
