@@ -1,6 +1,9 @@
+
 #include <fcntl.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -13,8 +16,8 @@ typedef struct FATentry{
 
 typedef struct FileHead {
 	int type;
-	char name[12];
-	int lastAcces;
+	char *name;
+	int lastAccess;
 	int blockNum;
 	int size;
 } FileHead;
@@ -23,9 +26,13 @@ typedef struct FileHead {
 #define SIZE_OF_BLOCKS 32
 #define SIZE_OF_FAT NUM_OF_BLOCKS * sizeof(struct FATentry)
 
-#define ROOT_BLOCK 0		// blocks[ROOT_BLOCK][x]
+#define ROOT_BLOCK 0		// blocks[ROO/T_BLOCK][x]
 #define ROOT_NAME "ROOT"
 
+#define MAX_FILE_NAME_SIZE 12
+
+char *convertFileName(char *givenName);
+struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output);
 
 
 /*	

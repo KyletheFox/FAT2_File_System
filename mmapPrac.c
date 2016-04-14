@@ -22,6 +22,11 @@ int main(int argc, char const *argv[]) {
 	map = mmap(NULL, fileInfo.st_size, PROT_READ | PROT_WRITE,
 		MAP_PRIVATE, fd, 0);
 
+	// Practice
+	struct FileHead tmp;
+	tmp = GetFileHead(map, NUM_OF_BLOCKS, &tmp);
+
+
 	// --------------- Printing FAT ------------------------------
 
 	printf("---FAT----\n");
@@ -29,7 +34,7 @@ int main(int argc, char const *argv[]) {
 	for (i = 0, j = 0; i < (NUM_OF_BLOCKS); i++, j++)	{
 		fat[j].link = map[i];
 		fileTracker+=1;
-		printf("-------Entry: BLink:%d\n", fat[j].link);
+		printf("-------Entry: Link:%d\n", fat[j].link);
 	}
 
 	// -------------------------------------------------------------
@@ -41,6 +46,7 @@ int main(int argc, char const *argv[]) {
 	for (i = 0; i < NUM_OF_BLOCKS; ++i) 	{
 		
 		for (j = 0; j < SIZE_OF_BLOCKS; ++j) {
+			
 			if (map[fileTracker] < 10) {
 				sprintf(temp, "%d", map[fileTracker]);
 				blockArray[i][j] = temp[0];
@@ -48,6 +54,8 @@ int main(int argc, char const *argv[]) {
 			else {
 				blockArray[i][j] = map[fileTracker];
 			}
+			
+			//blockArray[i][j] = map[fileTracker];
 			fileTracker++;
 		}
 
