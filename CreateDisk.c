@@ -13,9 +13,9 @@ int main(int argc, char const *argv[]) {
 	int o = 1000;
 
 	// Root Directory
-	root.type = 5678;
+	root.type = 2;
 	root.name = convertFileName(ROOT_NAME);
-	root.lastAccess = 4512;			// mmddyyyy
+	root.lastAccess = 4132016;			// mmddyyyy
 	root.blockNum = 5656; 			// Block 0
 	root.size = 2359;				// Number of Files/dirs
 
@@ -25,12 +25,12 @@ int main(int argc, char const *argv[]) {
 	// Filling FAT Table
 	for (i = 0; i < NUM_OF_BLOCKS; ++i) {
 		if (i == 0) {
-			fputc(0x00, fp);
-			fputc(0x00, fp);
+			fputc(00, fp);
+			fputc(00, fp);
 		}
 		else {
-			fputc(0x99, fp);
-			fputc(0x99, fp);
+			fputc(99, fp);
+			fputc(99, fp);
 		}
 	}
 
@@ -42,6 +42,7 @@ int main(int argc, char const *argv[]) {
 				
 				// Creates Root Directory in first block
 				if (i == 0) {
+					
 					if (j >= 0 & j <= 3) {
 						fprintf(fp, "%c", root.type/k);
 						root.type %= k;

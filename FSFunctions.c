@@ -35,9 +35,10 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 	int i;						// Loop Counter
 	int index = startIndex;		// Index of File
 
-	//printf("%d\n", disk[4]);
+	
 
 	for (i = 0; i < sizeof(struct FileHead); ++i) {
+
 		if (i >= 0 && i <= 3) {
 			output->type += disk[index];
 			if (i < 3)

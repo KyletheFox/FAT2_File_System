@@ -24,20 +24,18 @@ int main(int argc, char const *argv[]) {
 
 	// Practice
 	struct FileHead tmp;
-	tmp = GetFileHead(map, NUM_OF_BLOCKS, &tmp);
+	tmp = GetFileHead(map, NUM_OF_BLOCKS * 2, &tmp);
 
 
 	// --------------- Printing FAT ------------------------------
 
 	printf("---FAT----\n");
 
-	for (i = 0, j = 0; i < (NUM_OF_BLOCKS * 2); i+=2, j+=2)	{
-		fat[j].link = map[i];
-		printf("fat[j].link: %x\n", fat[j].link);
-		fat[j+1].next = map[i+i];
-		printf("fat[j].next: %x\n", fat[j+1].next);
+	for (i = 0, j = 0; i < (NUM_OF_BLOCKS * 2); i+=2, j++)	{
+		fat[j].link = map[i] * 100;
+		fat[j].link += map[i+1];
 		fileTracker+=2;
-		printf("-------Entry: Link:%x Next:%x\n", fat[j].link, fat[j].next);
+		printf("-------Entry: Link:%d\n", fat[j].link);
 	}
 
 	// -------------------------------------------------------------
