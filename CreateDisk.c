@@ -34,6 +34,7 @@ int main(int argc, char const *argv[]) {
 		}
 	}
 
+
 	// Filling in all the data blocks
 	for (i = 0; i < NUM_OF_BLOCKS; ++i)	{
 
@@ -43,9 +44,10 @@ int main(int argc, char const *argv[]) {
 				// Creates Root Directory in first block
 				if (i == 0) {
 					
-					if (j >= 0 & j <= 3) {
+					if (j >= 0 && j <= 3) {
 						fprintf(fp, "%c", root.type/k);
 						root.type %= k;
+						//printf("root.type: %u\n", root.type);
 						k /= 10;
 					}
 					if (j == 4)	
@@ -54,22 +56,26 @@ int main(int argc, char const *argv[]) {
 					if (j >= 16 && j <= 23) {
 						fprintf(fp, "%c", root.lastAccess/m);
 						root.lastAccess %= m;
+						//printf("root.lastAccess: %u\n", root.lastAccess);
 						m /= 10;
 					}
-					if (j >= 24 & j <= 27) {
+					if (j >= 24 && j <= 27) {
 						fprintf(fp, "%c", root.blockNum/n);
 						root.blockNum %= n;
+						//printf("root.blockNum: %u\n", root.blockNum);
 						n /= 10;
 					}
-					if (j >= 28) {
+					if (j >= 28 && j <= 31)  {
 						fprintf(fp, "%c", root.size/o);
 						root.size %= o;
+						//printf("root.size: %u\n", root.size);
 						o /= 10;
 					}
 				}
 
-				else 
+				else {
 					fputc(0, fp);
+				}
 				
 		}
 	}

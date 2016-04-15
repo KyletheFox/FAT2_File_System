@@ -26,11 +26,11 @@ char *convertFileName(char *givenName) {
 struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output) {
 
 	// Data Fields for FileHead struct
-	int type = 0;
-	int lastAccess = 0;
-	int blockNum = 0;
-	unsigned int size = 0;	
-	char *name;								
+	output->type = 0;	
+	output->lastAccess = 0;
+	output->blockNum = 0;
+	output->size = 0;
+	char name[13];								
 	
 	int i;						// Loop Counter
 	int index = startIndex;		// Index of File
@@ -45,8 +45,10 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 				output->type *= 10;				
 		}
 
-		if (i >= 4 && i <= 15) {
-			//output->name[i-4] = disk[index];
+		if (i >= 4 && i <= 15) 	{
+			printf("%c\n", disk[index]);
+			name[i-4] = disk[index];
+			printf("Here\n");
 		}
 
 		if (i >= 16 && i <= 23) {
@@ -61,7 +63,7 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 				output->blockNum *= 10;
 		}
 
-		if (i >= 28) {
+		if (i >= 28 && i <= 31) {
 			output->size += disk[index];
 			if (i < 31)
 				output->size *= 10;
@@ -70,10 +72,11 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 		index++;
 	}
 
-	//name[MAX_FILE_NAME_SIZE] = '\0';
+	name[MAX_FILE_NAME_SIZE] = '\0';
+	output->name=name;
 
 	printf("Type: %d\n", output->type);
-	//printf("Name: %s\n", output->name);
+	printf("Name: %s\n", output->name);
 	printf("lastAccess: %d\n", output->lastAccess);
 	printf("blockNum: %d\n", output->blockNum);
 	printf("size: %d\n", output->size);

@@ -15,15 +15,15 @@ typedef struct FATentry{
 } FATentry;
 
 typedef struct FileHead {
-	int type;
+	unsigned int type;
 	char *name;
-	int lastAccess;
-	int blockNum;
-	int size;
+	unsigned int lastAccess;
+	unsigned int blockNum;
+	unsigned int size;
 } FileHead;
 
-#define NUM_OF_BLOCKS 4
-#define SIZE_OF_BLOCKS 32
+#define NUM_OF_BLOCKS 16
+#define SIZE_OF_BLOCKS 64
 #define SIZE_OF_FAT NUM_OF_BLOCKS * sizeof(struct FATentry)
 
 #define ROOT_BLOCK 0		// blocks[ROO/T_BLOCK][x]
