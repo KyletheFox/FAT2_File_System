@@ -84,3 +84,21 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 	return *output;
 
 }
+
+void parseFileName(char *pathname, char **parsedName) {
+
+	char *token;		// Temporary place holder for token strings
+	//char somename[20] = "root/pir/awesome";
+	int i = 0;
+
+	printf("%s\n", pathname);
+	token = strtok(pathname, "/"); 
+
+	while (token != NULL) {
+		printf("Here\n");
+		//*(parsedName+i) = token;
+		printf("%s\n", token); 
+		token = strtok(NULL,"/");
+		i++;
+	}
+}
