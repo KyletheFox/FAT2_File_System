@@ -46,9 +46,7 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 		}
 
 		if (i >= 4 && i <= 15) 	{
-			printf("%c\n", disk[index]);
 			name[i-4] = disk[index];
-			printf("Here\n");
 		}
 
 		if (i >= 16 && i <= 23) {
