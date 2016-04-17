@@ -24,7 +24,7 @@ typedef struct FileHead {
 
 #define NUM_OF_BLOCKS 16
 #define SIZE_OF_BLOCKS 64
-#define SIZE_OF_FAT NUM_OF_BLOCKS * sizeof(struct FATentry)
+#define SIZE_OF_FAT NUM_OF_BLOCKS * 2
 
 #define ROOT_BLOCK 0		// blocks[ROO/T_BLOCK][x]
 #define ROOT_NAME "ROOT"
@@ -33,6 +33,7 @@ typedef struct FileHead {
 
 char *convertFileName(char *givenName);
 struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output);
+void parseFileName(char *pathname, char *parsedName[]);
 
 
 /*	
