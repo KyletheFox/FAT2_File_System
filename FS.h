@@ -1,4 +1,4 @@
-
+#include <ctime>
 #include <fcntl.h>
 #include <math.h>
 #include <stdio.h>
@@ -34,7 +34,7 @@ typedef struct FileHead {
 char *convertFileName(char *givenName);
 struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output);
 void parseFileName(char *pathname, char *parsedName[]);
-void getTimeStamp(time_t *timev);
+struct tm *getTimeStamp();
 
 
 /*	
