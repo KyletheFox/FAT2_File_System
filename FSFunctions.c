@@ -100,3 +100,17 @@ void parseFileName(char *pathname, char **parsedName) {
 		i++;
 	}
 }
+
+/*
+	This function gets the time of day to fill in time stamp for
+	file headers. Changes time_t obj on the main stack 
+*/
+void getTimeStamp(time_t *timev) {
+	
+	*timev = time(NULL);
+	if(*timev != -1)
+        printf("The current time is %s\n",
+               asctime(gmtime(timev)));
+}
+
+
