@@ -34,6 +34,7 @@ typedef struct FileHead {
 char *convertFileName(char *givenName);
 struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output);
 void parseFileName(char *pathname, char *parsedName[]);
+void getTimeStamp(time_t *timev);
 
 
 /*	
@@ -47,4 +48,17 @@ void parseFileName(char *pathname, char *parsedName[]);
 		File Size 		4B
 ------------------------------------------
 		Total: 			32B 
+*/
+
+/*
+	File Header / FAT Entry:
+
+	File Header Types:
+		0001 - File
+		0002 - Directory
+
+	FAT Links:
+		9999 - Free Space
+		0000 - Full w/o link
+		xxxx - Full w/ link to block xxxx
 */
