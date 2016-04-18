@@ -3,11 +3,13 @@
 int main(int argc, char const *argv[])
 {
 /*
-*	Objectinve: Use getTimeStamp() - Working
+*	Objectinve: U7se getTimeStamp() - Working
 */
-	time_t stamp;
-	getTimeStamp(&stamp);
-	
+	struct tm *stamp;
+	stamp = getTimeStamp();
+	printf("%d\n", stamp->tm_mon);
+	printf("%d\n", 1900 + stamp->tm_year);
+	printf("%d\n", stamp->tm_mday);
 	return 0;
 	
 }
