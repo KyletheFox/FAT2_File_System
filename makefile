@@ -1,8 +1,11 @@
 create: CreateDisk.c FSFunctions.c
-	gcc -Wall -o createDisk FSFunctions.c CreateDisk.c -I.
+	g++ -Wall -o createDisk FSFunctions.c CreateDisk.c -I.
 
 display: DisplayDisk.c FSFunctions.c
-	gcc -o displayDisk FSFunctions.c DisplayDisk.c -I.
+	g++ -Wall -o displayDisk FSFunctions.c DisplayDisk.c -I.
+
+printB: printBytes.c 
+	g++ -Wall - prtB printBytes.c -I.
 
 some: some.c FSFunctions.c
-	gcc -o some some.c FSFunctions.c -I.
+	g++ -Wall -o play some.c FSFunctions.c -I.
