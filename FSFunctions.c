@@ -32,7 +32,7 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 	output->size = 0;
 	char name[13];								
 	
-	int i;						// Loop Counter
+	unsigned int i;						// Loop Counter
 	int index = startIndex;		// Index of File
 
 	
@@ -103,14 +103,52 @@ void parseFileName(char *pathname, char **parsedName) {
 
 /*
 	This function gets the time of day to fill in time stamp for
-	file headers. Changes time_t obj on the main stack 
+	file headers. Creates memory on heap for struct tm pointer. 
+	Must free space at before closing file
+
+	tm_year: year since 1900
+	tm_mon: month of the year
+	tm_mday: day of the month
 */
-void getTimeStamp(time_t *timev) {
-	
-	*timev = time(NULL);
-	if(*timev != -1)
-        printf("The current time is %s\n",
-               asctime(gmtime(timev)));
+struct tm *getTimeStamp() {
+
+	// Variables
+	struct tm *timeStamp;  	// Date Obj
+	time_t timev;			// time object need to get tm obj
+
+	// Allocate memory on heap
+	timestamp = (tm*)malloc(sizeof(struct tm)); 
+
+	// Get the systems timestamp
+	time( &timev );
+
+	// Convert to the local time and fill in tm obj
+	timeStamp = localtime(&timev);
+
+	// Returns pointer to struct tm in the heap
+	return timeStamp;
 }
+
+// Functions needed to be developed
+/*
+	int findNextFreeBlock()
+	--- Uses linear search to find next free block and returns
+	--- block number
+
+	int findNextLinkBlock()
+	--- Determins if there is a link to another block. returns
+	--- linked block number on true or -1 if false
+
+	struct FileHead *createFileHead(type, name, size)
+	--- Creates a FileHead struct from given info. Function 
+	--- automatically gets timestamp and next free block.
+
+	int getFileSize(FILE *)
+	--- Counts charaters inside file and returns the count
+
+	int findFile(pathname)
+	--- Searches through file system for the file. Returns the
+	--- index of the file block else returns -1
+*/
 
 
