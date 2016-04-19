@@ -19,7 +19,7 @@ int main(int argc, char const *argv[]) {
 	fstat(fd, &fileInfo);
 	
 	// Creates Memory Map of File
-	map = mmap(NULL, fileInfo.st_size, PROT_READ | PROT_WRITE,
+	map = (char*)mmap(NULL, fileInfo.st_size, PROT_READ | PROT_WRITE,
 		MAP_PRIVATE, fd, 0);
 
 	// Practice
