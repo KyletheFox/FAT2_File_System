@@ -30,11 +30,16 @@ typedef struct FileHead {
 #define ROOT_NAME "ROOT"
 
 #define MAX_FILE_NAME_SIZE 12
+#define MAX_DIR_DEPTH 10
 
 char *convertFileName(char *givenName);
 struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output);
-void parseFileName(char *pathname, char *parsedName[]);
+char **parsePathName(char pathname[]);
 struct tm *getTimeStamp();
+int getNextFreeBlock(char *map);
+void updateFAT(int fatIndex, char* map, int newValue);
+
+int koCreate(unsigned int type, char* pathname);
 
 
 /*	
