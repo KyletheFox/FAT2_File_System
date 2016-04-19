@@ -17,6 +17,66 @@
 		- Update FAT
 */
 
+int koCreate(unsigned int type, char* pathname) {
+
+	int fp;
+	char **parsePath;
+	char *fileName;
+	char *temp;
+	char *map;
+	int fileIndex = 0;
+	int blockNum;
+	int date;
+	struct tm *timeStamp;
+	struct stat fileInfo;
+
+	fp = open("FS.txt", O_RDWR);	// Opening disk
+
+	// Gets file info and place into struct
+	fstat(fp, &fileInfo);
+
+	// Memory Mapped File
+	map = (char*)mmap(NULL, fileInfo.st_size, PROT_READ | PROT_WRITE,
+		MAP_SHARED, fp, 0);
+
+	// Get parsed pathname
+	parsePath = parsePathName(pathname);
+
+	// loop to get last element of pointer array
+	while (temp != NULL) {
+		temp = parsePath[fileIndex];
+		//printf("%d %s\n", fileIndex, temp);
+		if(temp == NULL) 
+			fileIndex--;
+		else
+			fileIndex++;
+	}
+
+	// Get File Name
+	fileName = parsePath[fileIndex];
+
+	// Get Time Stamp
+	timeStamp = getTimeStamp();
+
+	// Fill in date from timeStamp
+	date = (timeStamp->tm_mon+1) * 1000000;
+	date += timeStamp->tm_mday * 10000;
+	date += timeStamp->tm_year + 1900;
+
+	printf("%d\n", date);
+
+	// Get First Free Block
+	blockNum = getNextFreeBlock(map);
+
+	// Update FAT table
+	updateFAT(blockNum, map, 0000);
+
+
+
+	return 0;
+
+}
+
 /*
 	Open a file/dir
 
