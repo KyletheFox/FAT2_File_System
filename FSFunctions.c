@@ -39,7 +39,7 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 
 	for (i = 0; i < sizeof(struct FileHead); ++i) {
 
-		if (i >= 0 && i <= 3) {
+		if (i <= 3) {
 			output->type += disk[index];
 			if (i < 3)
 				output->type *= 10;				
@@ -117,7 +117,7 @@ struct tm *getTimeStamp() {
 	time_t timev;			// time object need to get tm obj
 
 	// Allocate memory on heap
-	timestamp = (tm*)malloc(sizeof(struct tm)); 
+	timeStamp = (tm*)malloc(sizeof(struct tm)); 
 
 	// Get the systems timestamp
 	time( &timev );
@@ -149,6 +149,11 @@ struct tm *getTimeStamp() {
 	int findFile(pathname)
 	--- Searches through file system for the file. Returns the
 	--- index of the file block else returns -1
+
+	int goToBlockIndex( block number )
+	--- Gets the index of the specified block number
+
+	
 */
 
 
