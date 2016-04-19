@@ -7,5 +7,6 @@ display: DisplayDisk.c FSFunctions.c
 printB: printBytes.c 
 	g++ -Wall - prtB printBytes.c -I.
 
-some: some.c FSFunctions.c
-	g++ -Wall -o play some.c FSFunctions.c -I.
+some: some.c FSFunctions.c diskFunc.c
+	g++ -Wall -o play some.c FSFunctions.c diskFunc.c -I.
+
