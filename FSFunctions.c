@@ -164,7 +164,7 @@ int getNextFreeBlock(char *map) {
 
 }
 
-void updateFAT(int fatIndex, char* map, int newValue) {
+void updateFAT(int fatIndex, char*  map, int newValue) {
 	int first = newValue/100;
 	int second = newValue%100;
 
