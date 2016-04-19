@@ -1,5 +1,7 @@
 #include "FS.h"
 
+using namespace std;
+
 char *convertFileName(char *givenName) {
 
 	int length = strlen(givenName);
@@ -83,22 +85,31 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 
 }
 
-void parseFileName(char *pathname, char **parsedName) {
+/*
+	Returns array of strings based on pathname given as argument.
+	Splits up pathname by "/" and inserts each string into the 
+	array of strings. 
+*/
+char **parsePathName(char pathname[]) {
 
 	char *token;		// Temporary place holder for token strings
-	//char somename[20] = "root/pir/awesome";
-	int i = 0;
+	char **retVal;		// Array of the each part of the pathname
+	int i = 0;			// Loop counter
 
-	printf("%s\n", pathname);
+	// Allocate memory on heap for retVal
+	retVal = (char**)malloc(strlen(pathname)*MAX_DIR_DEPTH + 1);
+
+	// Get first dir of input -- Should be ROOT
 	token = strtok(pathname, "/"); 
 
+	// Loop through given pathname and separate by "/"
 	while (token != NULL) {
-		printf("Here\n");
-		//*(parsedName+i) = token;
-		printf("%s\n", token); 
+		retVal[i] = token; 
 		token = strtok(NULL,"/");
 		i++;
 	}
+
+	return retVal;
 }
 
 /*
@@ -129,11 +140,40 @@ struct tm *getTimeStamp() {
 	return timeStamp;
 }
 
+/*
+	Uses map to loop through FAT and find the next free block. 
+	If there is a free block, the value of the FAT table for that 
+	block will have the value of 9999. This will be in the FAT as
+	two chars, both with the value 99 (0x63 in hex). Function will
+	return value of the next free block. If there are no free blocks
+	function will return -1.
+*/
+int getNextFreeBlock(char *map) {
+
+	int freeBlock;		// Index of free block
+	int i;				// Loop Counter
+
+	for(i = 0; i < SIZE_OF_FAT; i+=2) {
+		if(map[i] == 99) {
+			freeBlock = i;
+			return freeBlock;	// Sucess
+		}
+	}
+
+	return -1; 	// Free block not found
+
+}
+
+void updateFAT(int fatIndex, char* map, int newValue) {
+	int first = newValue/100;
+	int second = newValue%100;
+
+	map[fatIndex] = first;
+	map[fatIndex + 1] = second;
+}
+
 // Functions needed to be developed
 /*
-	int findNextFreeBlock()
-	--- Uses linear search to find next free block and returns
-	--- block number
 
 	int findNextLinkBlock()
 	--- Determins if there is a link to another block. returns
