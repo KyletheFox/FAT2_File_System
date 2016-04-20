@@ -32,12 +32,12 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 	output->lastAccess = 0;
 	output->blockNum = 0;
 	output->size = 0;
-	char name[13];								
+	char *name;								
 	
 	unsigned int i;						// Loop Counter
 	int index = startIndex;		// Index of File
 
-	
+	name = (char*)malloc(13);
 
 	for (i = 0; i < sizeof(struct FileHead); ++i) {
 
@@ -170,6 +170,41 @@ void updateFAT(int fatIndex, char*  map, int newValue) {
 
 	map[fatIndex] = first;
 	map[fatIndex + 1] = second;
+}
+
+/*
+	Finds the index of the first character for the file header
+	belonging to the file path given
+*/
+int findFile(char **parsePath, char* map) {
+
+	// Variables
+	int index = SIZE_OF_FAT;		// Index where the file header is
+	int i=0, j=0;						// Loop Counters
+	struct FileHead temp; 			// Temporay placeholder to hold values of File Header
+	char found = 0;				// Flag to determine if the file header was found
+
+	while (parsePath[i] != NULL && j < SIZE_OF_BLOCKS) {
+		temp = GetFileHead(map, index, &temp);
+		printf("%s\n", temp.name);
+		printf("%s\n", convertFileName(parsePath[i]));
+		if (strcmp(convertFileName(parsePath[i]), temp.name) == 0) {
+			printf("Found %s\n", temp.name);
+			index = temp.blockNum*SIZE_OF_BLOCKS + SIZE_OF_FAT;
+			i++;
+		} else {
+			index += SIZE_OF_FILEHEAD;
+			j += SIZE_OF_FILEHEAD;
+			printf("No Match\n");
+		}
+	}
+
+	if (index >= SIZE_OF_BLOCKS) {
+		return -1;
+	}
+	else {
+		return index;
+	}
 }
 
 // Functions needed to be developed
