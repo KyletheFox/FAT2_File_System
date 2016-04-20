@@ -42,6 +42,8 @@ int koCreate(unsigned int type, char* pathname) {
 	// Get parsed pathname
 	parsePath = parsePathName(pathname);
 
+	printf("%d\n", findFile(parsePath, map));
+
 	// loop to get last element of pointer array
 	while (temp != NULL) {
 		temp = parsePath[fileIndex];
@@ -63,14 +65,13 @@ int koCreate(unsigned int type, char* pathname) {
 	date += timeStamp->tm_mday * 10000;
 	date += timeStamp->tm_year + 1900;
 
-	printf("%d\n", date);
-
 	// Get First Free Block
 	blockNum = getNextFreeBlock(map);
 
 	// Update FAT table
 	updateFAT(blockNum, map, 0000);
 
+	// Find Location to place File Header
 
 
 	return 0;
