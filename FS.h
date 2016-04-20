@@ -25,6 +25,8 @@ typedef struct FileHead {
 #define NUM_OF_BLOCKS 16
 #define SIZE_OF_BLOCKS 64
 #define SIZE_OF_FAT NUM_OF_BLOCKS * 2
+#define SIZE_OF_FILEHEAD 32
+
 
 #define ROOT_BLOCK 0		// blocks[ROO/T_BLOCK][x]
 #define ROOT_NAME "ROOT"
@@ -38,6 +40,7 @@ char **parsePathName(char pathname[]);
 struct tm *getTimeStamp();
 int getNextFreeBlock(char *map);
 void updateFAT(int fatIndex, char* map, int newValue);
+int findFile(char **parsePath, char* map);
 
 int koCreate(unsigned int type, char* pathname);
 
