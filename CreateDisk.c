@@ -15,7 +15,9 @@ int main(int argc, char const *argv[]) {
 	//  ------- Variables ------------------------------------
 	FILE *fp;				// Disk File pointer
 	int i, j;				// Loop Counters
+	int date;				// Placeholder for root dir lastAccess
 	struct FileHead root;	// Root Dir file info
+	struct tm *timeStamp;	// System timestamp
 
 	/* 
 		Used to print out characters starting from the front.
@@ -29,12 +31,24 @@ int main(int argc, char const *argv[]) {
 	int o = 1000;
 	// --------------------------------------------------------
 
+	// --------- Getting Timestamp ----------------------------
+
+	// Get Time Stamp
+	timeStamp = getTimeStamp();
+
+	// Fill in date from timeStamp
+	date = (timeStamp->tm_mon+1) * 1000000;
+	date += timeStamp->tm_mday * 10000;
+	date += timeStamp->tm_year + 1900;
+
+	// ------------------------------------------------------------
+
 	// Root Directory Struct
 	root.type = 2;							// Type of header
 	root.name = convertFileName(ROOT_NAME);	// Dir name
-	root.lastAccess = 4132016;				// mmddyyyy
-	root.blockNum = 5656; 					// Block 0
-	root.size = 2359;						// Number of Files/dirs
+	root.lastAccess = date;				// mmddyyyy
+	root.blockNum = 0; 					// Block 0
+	root.size = 0;						// Number of Files/dirs
 
 	// Open/Creates File System File
 	fp = fopen("FS.txt", "w+");
