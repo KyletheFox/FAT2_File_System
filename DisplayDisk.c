@@ -22,10 +22,6 @@ int main(int argc, char const *argv[]) {
 	map = (char*)mmap(NULL, fileInfo.st_size, PROT_READ | PROT_WRITE,
 		MAP_PRIVATE, fd, 0);
 
-	// Practice
-	struct FileHead tmp;
-	tmp = GetFileHead(map, NUM_OF_BLOCKS * 2, &tmp);
-
 
 	// --------------- Printing FAT ------------------------------
 
