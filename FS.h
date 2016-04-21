@@ -41,6 +41,7 @@ struct tm *getTimeStamp();
 int getNextFreeBlock(char *map);
 void updateFAT(int fatIndex, char* map, int newValue);
 int findFile(char **parsePath, char* map);
+int writeHeader(struct FileHead head, char* map, int index);
 
 int koCreate(unsigned int type, char* pathname);
 
