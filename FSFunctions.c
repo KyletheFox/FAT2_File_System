@@ -75,11 +75,13 @@ struct FileHead GetFileHead(char *disk, int startIndex, struct FileHead *output)
 	name[MAX_FILE_NAME_SIZE] = '\0';
 	output->name=name;
 
+	/*
 	printf("Type: %d\n", output->type);
 	printf("Name: %s\n", output->name);
 	printf("lastAccess: %d\n", output->lastAccess);
 	printf("blockNum: %d\n", output->blockNum);
 	printf("size: %d\n", output->size);
+	*/
 
 	return *output;
 
@@ -186,8 +188,8 @@ int findFile(char **parsePath, char* map) {
 
 	while (parsePath[i] != NULL && j < SIZE_OF_BLOCKS) {
 		temp = GetFileHead(map, index, &temp);
-		printf("%s\n", temp.name);
-		printf("%s\n", convertFileName(parsePath[i]));
+		//printf("%s\n", temp.name);
+		//printf("%s\n", convertFileName(parsePath[i]));
 		if (strcmp(convertFileName(parsePath[i]), temp.name) == 0) {
 			printf("Found %s\n", temp.name);
 			index = temp.blockNum*SIZE_OF_BLOCKS + SIZE_OF_FAT;
@@ -195,16 +197,94 @@ int findFile(char **parsePath, char* map) {
 		} else {
 			index += SIZE_OF_FILEHEAD;
 			j += SIZE_OF_FILEHEAD;
-			printf("No Match\n");
+			printf("Not Found: %s\n", convertFileName(parsePath[i]));
 		}
 	}
 
-	if (index >= SIZE_OF_BLOCKS) {
+	if (j >= SIZE_OF_BLOCKS) {
 		return -1;
 	}
 	else {
 		return index;
 	}
+}
+
+int writeHeader(struct FileHead head, char* map, int index) {
+
+	int i=0, j=0; 			// Loop counter
+	struct FileHead temp;
+	int good = 0;
+
+	/* 
+		Used to print out characters starting from the front.
+		Uses % and /10 to accomplish this. 
+			1000 - 		4 chars
+			10000000 - 	8 chars
+	*/
+	int k = 1000;
+	int m = 10000000;
+	int n = 1000;
+	int o = 1000;
+
+	// Find empty space in data block to put header
+	while (j < SIZE_OF_BLOCKS && !good) {
+		temp = GetFileHead(map, index, &temp);
+		if (temp.type != 0) {
+			index += SIZE_OF_FILEHEAD;
+			j += SIZE_OF_FILEHEAD;
+		}
+		else
+			good = 1;		// True
+	}
+
+	// print message is no space was found
+	if (!good) {
+		printf("No More Space in Directory: File was NOT created\n");
+	}
+	else {
+
+		// Write file header starting at the index found above
+		for (i = 0; i < SIZE_OF_FILEHEAD; i++) {
+			// Inserting File type
+			if (i >= 0 && i <= 3) {
+				map[index+i] = head.type/k;
+				head.type %= k;
+				k /= 10;
+				printf("%d\n", map[index+i]);
+			}
+
+			// Inserting File Name
+			if (i >= 4 && i <= 15)	{
+				map[index+i] = head.name[i-4];
+				printf("Char: %c\n", head.name[i-4]);
+			}
+
+			// Inserting File Last Access Time
+			if (i >= 16 && i <= 23) {
+				map[index+i] = head.lastAccess/m;
+				head.lastAccess %= m;
+				m /= 10;
+			}
+
+			// Inserting File Block Number
+			if (i >= 24 && i <= 27) {
+				map[index+i] = head.blockNum/n;
+				head.blockNum %= n;
+				n /= 10;
+			}
+
+			// Inserting File Size
+			if (i >= 28 && i <= 31)  {
+				map[index+i] = head.size/o;
+				head.size %= o;
+				o /= 10;
+			}
+		}
+
+	}
+
+
+
 }
 
 // Functions needed to be developed
@@ -220,10 +300,6 @@ int findFile(char **parsePath, char* map) {
 
 	int getFileSize(FILE *)
 	--- Counts charaters inside file and returns the count
-
-	int findFile(pathname)
-	--- Searches through file system for the file. Returns the
-	--- index of the file block else returns -1
 
 	int goToBlockIndex( block number )
 	--- Gets the index of the specified block number
