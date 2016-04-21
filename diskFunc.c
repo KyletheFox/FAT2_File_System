@@ -27,6 +27,8 @@ int koCreate(unsigned int type, char* pathname) {
 	int fileIndex = 0;
 	int blockNum;
 	int date;
+	int index;
+	struct FileHead newHead;
 	struct tm *timeStamp;
 	struct stat fileInfo;
 
@@ -42,8 +44,6 @@ int koCreate(unsigned int type, char* pathname) {
 	// Get parsed pathname
 	parsePath = parsePathName(pathname);
 
-	printf("%d\n", findFile(parsePath, map));
-
 	// loop to get last element of pointer array
 	while (temp != NULL) {
 		temp = parsePath[fileIndex];
@@ -56,6 +56,11 @@ int koCreate(unsigned int type, char* pathname) {
 
 	// Get File Name
 	fileName = parsePath[fileIndex];
+
+	// Remove Filename from parsePath to dir block to write filehead
+	parsePath[fileIndex] = NULL;
+
+	printf("This should be null: %s\n", parsePath[fileIndex]);
 
 	// Get Time Stamp
 	timeStamp = getTimeStamp();
@@ -71,8 +76,20 @@ int koCreate(unsigned int type, char* pathname) {
 	// Update FAT table
 	updateFAT(blockNum, map, 0000);
 
-	// Find Location to place File Header
+	// Find Data block associated with the path
+	index = findFile(parsePath, map);	
 
+	printf("index: %d\n", index);
+
+	// Create Struct
+	newHead.type = 2;
+	newHead.name = convertFileName(fileName);
+	newHead.lastAccess = date;
+	newHead.blockNum = blockNum;
+	newHead.size = 0;
+
+	// Write to File System
+	writeHeader(newHead, map, index);
 
 	return 0;
 
