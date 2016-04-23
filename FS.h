@@ -44,6 +44,7 @@ int findFile(char **parsePath, char* map);
 int writeHeader(struct FileHead head, char* map, int index);
 
 int koCreate(unsigned int type, char* pathname);
+int koDelete(char *pathname);
 
 
 /*	
