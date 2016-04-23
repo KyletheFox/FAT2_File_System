@@ -97,7 +97,6 @@ int koCreate(unsigned int type, char* pathname) {
 			for (i = SIZE_OF_FAT + newHead.blockNum*SIZE_OF_BLOCKS; 
 					i < SIZE_OF_FAT + newHead.blockNum*SIZE_OF_BLOCKS + SIZE_OF_BLOCKS;
 					i++) {
-				printf("%d\n", i - SIZE_OF_FAT);
 				map[i] = 0;
 			}
 
@@ -119,6 +118,33 @@ int koCreate(unsigned int type, char* pathname) {
 		- Return the index of the data block the file
 */
 
+int koOpen(char *pathname) {
+
+	// Variables
+	int fp; 					// File Pointer
+	int index;					// Holds location of file
+	char **parsePath;			// Holds array of tokened pathname
+	char *map;					// memory map of the disk
+	struct stat fileInfo;		// Holds metadata about the file to be opened
+
+	fp = open("FS.txt", O_RDWR);	// Opening disk
+
+	// Gets file info and place into struct
+	fstat(fp, &fileInfo);
+
+	// Memory Mapped File
+	map = (char*)mmap(NULL, fileInfo.st_size, PROT_READ | PROT_WRITE,
+		MAP_SHARED, fp, 0);
+
+	// Get parsed pathname
+	parsePath = parsePathName(pathname);
+
+	// Gets index of the bloch where the file header to delete is 
+	index = findFile(parsePath, map);
+
+	return index;
+}
+
 /* 
 	Delete a file/dir
 
@@ -134,13 +160,13 @@ int koDelete(char *pathname) {
 	int fp; 					// File Pointer
 	int index;					// Holds location of file
 	int fileIndex = 0;			// Index of where the filename is in the parsedPath
-	int i = 0, j = 0;						// Loop counter
+	int i = 0, j = 0;			// Loop counter
 	char **parsePath;			// Holds array of tokened pathname
 	char *map;					// memory map of the disk
-	char *fileName;			// Filename of the file to create
+	char *fileName;				// Filename of the file to create
 	char *temp;					// Temporary Placeholder used to get last parsed path
 	struct stat fileInfo;		// Holds metadata about the file to be opened
-	struct FileHead tempHead;		// Place holder for file headers in data block
+	struct FileHead tempHead;	// Place holder for file headers in data block
 
 
 	fp = open("FS.txt", O_RDWR);	// Opening disk
@@ -188,7 +214,7 @@ int koDelete(char *pathname) {
 			// Free Block Allocated by file header
 			updateFAT(tempHead.blockNum*2, map, 9999);
 
-			// Return Good 
+			// Return Success
 			return 1;
 		}
 		else {
@@ -206,7 +232,12 @@ int koDelete(char *pathname) {
 	Close file
 
 	1. Return 0
+	----- Doesn't Do anything -----
 */
+
+void koClose(char *pathname) {
+	// Nothing
+}
 
 /*
 	Read File
