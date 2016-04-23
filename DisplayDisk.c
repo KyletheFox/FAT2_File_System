@@ -8,7 +8,6 @@ int main(int argc, char const *argv[]) {
 	char *map;						// Pointer for memory map
 	char temp[2];					// Temp array to convert int into char
 	struct stat fileInfo;			// Struct to hold all the File Metadata
-	struct FATentry entry;			// Temp entry obj to store into FAT Array
 	struct FATentry fat[NUM_OF_BLOCKS * sizeof(struct FATentry)];  	// Array to hold FAT
 	char blockArray[NUM_OF_BLOCKS][SIZE_OF_BLOCKS + 1];				// Array to hold Blocks
 
