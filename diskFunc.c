@@ -19,18 +19,19 @@
 
 int koCreate(unsigned int type, char* pathname) {
 
-	int fp;
-	char **parsePath;
-	char *fileName;
-	char *temp;
-	char *map;
-	int fileIndex = 0;
-	int blockNum;
-	int date;
-	int index;
-	struct FileHead newHead;
-	struct tm *timeStamp;
-	struct stat fileInfo;
+	// Variable
+	int fp;					// File pointer					
+	char **parsePath;		// Holds array of tokened pathname
+	char *fileName;			// Filename of the file to create
+	char *temp;				// Temporary Placeholder used to get last parsed path
+	char *map;				// memory map of the disk
+	int fileIndex = 0;		// Index of where the filename is in the parsedPath
+	int blockNum;			// The block number of the file to be created
+	int date;				// Holds the info about the current date
+	int index;				// The index of the block number rep by the file 
+	struct FileHead newHead;	// The new file header to be inserted
+	struct tm *timeStamp;		// Holds data from the system timestamp
+	struct stat fileInfo;		// Holds metadata about the file to be opened
 
 	fp = open("FS.txt", O_RDWR);	// Opening disk
 
@@ -47,7 +48,7 @@ int koCreate(unsigned int type, char* pathname) {
 	// loop to get last element of pointer array
 	while (temp != NULL) {
 		temp = parsePath[fileIndex];
-		//printf("%d %s\n", fileIndex, temp);
+		printf("%d %s\n", fileIndex, temp);
 		if(temp == NULL) 
 			fileIndex--;
 		else
@@ -71,28 +72,34 @@ int koCreate(unsigned int type, char* pathname) {
 	date += timeStamp->tm_year + 1900;
 
 	// Get First Free Block
-	blockNum = getNextFreeBlock(map);
-
-	// Update FAT table
-	updateFAT(blockNum, map, 0000);
+	blockNum = getNextFreeBlock(map); 
 
 	// Find Data block associated with the path
 	index = findFile(parsePath, map);	
-
+	
 	printf("index: %d\n", index);
 
-	// Create Struct
-	newHead.type = 2;
-	newHead.name = convertFileName(fileName);
-	newHead.lastAccess = date;
-	newHead.blockNum = blockNum;
-	newHead.size = 0;
+	if (index != -1) {
+		// Create Struct
+		newHead.type = 2;
+		newHead.name = convertFileName(fileName);
+		newHead.lastAccess = date;
+		newHead.blockNum = blockNum/2;
+		newHead.size = 0;
 
-	// Write to File System
-	writeHeader(newHead, map, index);
+		// Write to File System
+		if (writeHeader(newHead, map, index) != -1) {
+			// Update FAT table
+			updateFAT(blockNum, map, 0000);
+		}
 
-	return 0;
+		return 1;
+	}
 
+	// File was not created
+	else {
+		return -1;
+	}
 }
 
 /*
@@ -111,6 +118,8 @@ int koCreate(unsigned int type, char* pathname) {
 		- Overwrite with 0's
 		- Update FAT
 */
+
+
 
 /*
 	Close file
