@@ -169,11 +169,21 @@ int getNextFreeBlock(char *map) {
 /*
 	Changes value of the specified FAT index to newValue. It takes 
 	the new value and parses them into two chars. it inserts chars
-	into the FAT index and the map updates the file
+	into the FAT index and the map updates the file. If freeing blocks,
+	it also frees up any blocks that it is linked too.
 */
 void updateFAT(int fatIndex, char* map, int newValue) {
 	int first = newValue/100;		// Lowest two digits
 	int second = newValue%100;		// Highest two digits
+	int inner = 0;						// Used if the link being freed has a link to another
+									// 	block
+
+	// Check if freeing block and if there is a link
+	if (first == 99 && second == 99 && map[fatIndex] != 00 && map[fatIndex + 1] != 00) {
+		inner = map[fatIndex] * 100;
+		inner += map[fatIndex + 1];
+		updateFAT(inner, map, 9999);
+	}
 
 	map[fatIndex] = first;					
 	map[fatIndex + 1] = second;
