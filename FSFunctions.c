@@ -99,7 +99,7 @@ char **parsePathName(char pathname[]) {
 	int i = 0;			// Loop counter
 
 	// Allocate memory on heap for retVal
-	retVal = (char**)malloc(strlen(pathname)*MAX_DIR_DEPTH + 1);
+	retVal = (char**)calloc(MAX_DIR_DEPTH, strlen(pathname));
 
 	// Get first dir of input -- Should be ROOT
 	token = strtok(pathname, "/"); 
@@ -166,11 +166,16 @@ int getNextFreeBlock(char *map) {
 
 }
 
-void updateFAT(int fatIndex, char*  map, int newValue) {
-	int first = newValue/100;
-	int second = newValue%100;
+/*
+	Changes value of the specified FAT index to newValue. It takes 
+	the new value and parses them into two chars. it inserts chars
+	into the FAT index and the map updates the file
+*/
+void updateFAT(int fatIndex, char* map, int newValue) {
+	int first = newValue/100;		// Lowest two digits
+	int second = newValue%100;		// Highest two digits
 
-	map[fatIndex] = first;
+	map[fatIndex] = first;					
 	map[fatIndex + 1] = second;
 }
 
@@ -182,9 +187,8 @@ int findFile(char **parsePath, char* map) {
 
 	// Variables
 	int index = SIZE_OF_FAT;		// Index where the file header is
-	int i=0, j=0;						// Loop Counters
+	int i=0, j=0;					// Loop Counters
 	struct FileHead temp; 			// Temporay placeholder to hold values of File Header
-	char found = 0;				// Flag to determine if the file header was found
 
 	while (parsePath[i] != NULL && j < SIZE_OF_BLOCKS) {
 		temp = GetFileHead(map, index, &temp);
@@ -240,6 +244,7 @@ int writeHeader(struct FileHead head, char* map, int index) {
 	// print message is no space was found
 	if (!good) {
 		printf("No More Space in Directory: File was NOT created\n");
+		return -1;
 	}
 	else {
 
@@ -281,9 +286,8 @@ int writeHeader(struct FileHead head, char* map, int index) {
 			}
 		}
 
+		return 1;
 	}
-
-
 
 }
 
@@ -303,7 +307,6 @@ int writeHeader(struct FileHead head, char* map, int index) {
 
 	int goToBlockIndex( block number )
 	--- Gets the index of the specified block number
-
 	
 */
 
