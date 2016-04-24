@@ -42,12 +42,13 @@ int getNextFreeBlock(char *map);
 void updateFAT(int fatIndex, char* map, int newValue);
 int findFile(char **parsePath, char* map);
 int writeHeader(struct FileHead head, char* map, int index);
+int getFATLink(int index, char* map);
 
 int koCreate(unsigned int type, char* pathname);
 int koDelete(char *pathname);
 int koOpen(char *pathname);
 void koClose(char *pathname);
-
+char* koRead(char*);
 
 /*	
 	Specs:
