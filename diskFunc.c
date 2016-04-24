@@ -104,10 +104,11 @@ int koCreate(unsigned int type, char* pathname) {
 		}
 	}
 
+	// Close File
+	close(fp);
+
 	// File was not created
-	else {
-		return -1;
-	}
+	return -1;
 }
 
 /*
@@ -141,6 +142,9 @@ int koOpen(char *pathname) {
 
 	// Gets index of the bloch where the file header to delete is 
 	index = findFile(parsePath, map);
+
+	// Close File
+	close(fp);
 
 	return index;
 }
@@ -242,10 +246,85 @@ void koClose(char *pathname) {
 /*
 	Read File
 
-	1. Return char from block at location x	
-
-	* Like getc - reads one char at a time
+	1. Return char* starting from block at location x
+		and ending at the end of the block. This will also 
+		looks for links in the FAT to find the other parts of 
+		the file	
 */
+
+char* koRead(char *pathname) {
+
+	// Variables
+	char done = 0;				// Flag to makes ure all blocks are read
+	int fp; 					// File Pointer
+	int link;					// Index of where the filename is in the parsedPath
+	int index;					// Holds index of the beginning of block to read
+	int i = 0, j = 0;			// Loop counter
+	struct stat fileInfo;		// Holds metadata about the file to be opened
+	char **parsePath;			// Holds array of tokened pathname
+	char *map;					// memory map of the disk
+	char *fileChars;			// The file output
+
+	fp = open("FS.txt", O_RDWR);	// Opening disk
+
+	// Allocate space
+	fileChars = (char*)malloc(sizeof(char)*(SIZE_OF_BLOCKS*64) + 1);
+
+	// Gets file info and place into struct
+	fstat(fp, &fileInfo);
+
+	// Memory Mapped File
+	map = (char*)mmap(NULL, fileInfo.st_size, PROT_READ | PROT_WRITE,
+		MAP_SHARED, fp, 0);
+
+	// Get parsed pathname
+	parsePath = parsePathName(pathname);
+
+	// Find first block of pathname
+	if ((index = findFile(parsePath, map)) == -1) {
+		return NULL;
+	}
+
+	do {
+
+		// Write block of chars to char*
+		for (i = index; i < SIZE_OF_BLOCKS + index; ++i)	{
+
+			// Does not write chars. Should only before test
+			if (map[i] > 30) {
+				fileChars[j] = (char)map[i];
+				//printf("%c ", fileChars[j]);
+				++j;
+			}
+		}
+
+		// Gets the FAT entry of the block
+		link = getFATLink(index, map);
+
+		// The block is not linked to another one
+		if (link == 0000) {
+			done = 1;
+		}
+
+		// Get the index of the first block it is linked to 
+		else {
+			index = (link * SIZE_OF_BLOCKS) + SIZE_OF_FAT;
+		}
+		
+
+	} while (!done);
+
+	// Add eos
+	fileChars[j] = '\0';
+
+	//printf("%s\n", fileChars);
+	
+	// Close File
+	close(fp);
+
+	return fileChars;
+}
+
 
 /*
 	Write File
