@@ -49,7 +49,6 @@ int koCreate(unsigned int type, char* pathname) {
 	// loop to get last element of pointer array
 	while (temp != NULL) {
 		temp = parsePath[fileIndex];
-		printf("%d %s\n", fileIndex, temp);
 		if(temp == NULL) 
 			fileIndex--;
 		else
@@ -61,8 +60,6 @@ int koCreate(unsigned int type, char* pathname) {
 
 	// Remove Filename from parsePath to dir block to write filehead
 	parsePath[fileIndex] = NULL;
-
-	printf("This should be null: %s\n", parsePath[fileIndex]);
 
 	// Get Time Stamp
 	timeStamp = getTimeStamp();
@@ -77,12 +74,10 @@ int koCreate(unsigned int type, char* pathname) {
 
 	// Find Data block associated with the path
 	index = findFile(parsePath, map);	
-	
-	printf("index: %d\n", index);
 
 	if (index != -1) {
 		// Create Struct
-		newHead.type = 2;
+		newHead.type = type;
 		newHead.name = convertFileName(fileName);
 		newHead.lastAccess = date;
 		newHead.blockNum = blockNum/2;
@@ -188,7 +183,6 @@ int koDelete(char *pathname) {
 	// loop to get last element of pointer array
 	do {
 		temp = parsePath[fileIndex];
-		printf("%d %s\n", fileIndex, temp);
 		if(temp == NULL) 
 			fileIndex--;
 		else
@@ -197,8 +191,6 @@ int koDelete(char *pathname) {
 
 	// Get File Name
 	fileName = parsePath[fileIndex];
-
-	printf("%s\n", fileName);
 
 	// Remove Filename from parsePath to get index of block where file header is located
 	parsePath[fileIndex] = NULL;
@@ -293,7 +285,6 @@ char* koRead(char *pathname) {
 			// Does not write chars. Should only before test
 			if (map[i] > 30) {
 				fileChars[j] = (char)map[i];
-				//printf("%c ", fileChars[j]);
 				++j;
 			}
 		}
@@ -316,8 +307,6 @@ char* koRead(char *pathname) {
 
 	// Add eos
 	fileChars[j] = '\0';
-
-	//printf("%s\n", fileChars);
 	
 	// Close File
 	close(fp);
@@ -332,5 +321,93 @@ char* koRead(char *pathname) {
 	1. Set char in data block at location x
 	2. Fills in rest of chars after to zero
 
-	* Like putc - writes on char at a time
+	Writes entire block. If larger than a block it allocates another
+	block for the file.
 */
+void koWrite(char* pathname, char* string) {
+
+	// Variables
+	char done = 0;				// Flag to makes ure all blocks are writen
+	int fp; 					// File Pointer
+	int index;					// Holds index of the beginning of block to read
+	int length;					// Get length of the string to input
+	int i = 0, j = 0;			// Loop counter
+	int link;					
+	int currentFAT;
+	int nextFree;				// Next Free Block
+	struct stat fileInfo;		// Holds metadata about the file to be opened
+	char **parsePath;			// Holds array of tokened pathname
+	char *map;					// memory map of the disk
+
+	fp = open("FS.txt", O_RDWR);	// Opening disk
+
+	// Gets file info and place into struct
+	fstat(fp, &fileInfo);
+
+	// Memory Mapped File
+	map = (char*)mmap(NULL, fileInfo.st_size, PROT_READ | PROT_WRITE,
+		MAP_SHARED, fp, 0);
+
+	// Get parsed pathname
+	parsePath = parsePathName(pathname);
+
+	// Gets index of the bloch where the file header to delete is 
+	index = findFile(parsePath, map);
+
+	// Gets length of inputed string
+	length = strlen(string);
+
+	do {
+
+		// Write blocks worth of string into data block
+		for (i = 0; i < SIZE_OF_BLOCKS && j < length; ++i) {
+
+			// Write char from string to file
+			if (string[j] != NULL) {
+				map[index + i] = string[j];
+				j++;
+			}
+			else {
+				map[index + i] = '0';
+			}
+
+		}
+
+		// Check to see if there is more to write
+		if (j < length)	{
+
+			// Only add link if one doesn't already exist
+			if ((link = getFATLink(index, map)) == 0000) {
+			
+				// Index of the FAT of the next free block
+				nextFree = getNextFreeBlock(map);
+
+				// Allocate new block
+				updateFAT(nextFree, map, 0000);
+
+				// Get FAT link of new Block
+				link = nextFree/2;
+
+				// Get the FAT index of the current block
+				currentFAT = index - SIZE_OF_FAT;
+				currentFAT /= SIZE_OF_BLOCKS;
+
+				// Set the FAT of the current block to the next free one
+				updateFAT(currentFAT*2, map, link); 
+			}
+
+			// Set index to the new block
+			index = link * SIZE_OF_BLOCKS;
+			index += SIZE_OF_FAT;
+
+		}
+
+		else {
+			done = 1;
+		}
+
+	}	while(!done);
+}
+
+
+
