@@ -49,6 +49,7 @@ int koDelete(char *pathname);
 int koOpen(char *pathname);
 void koClose(char *pathname);
 char* koRead(char*);
+void koWrite(char* pathname, char* string);
 
 /*	
 	Specs:
