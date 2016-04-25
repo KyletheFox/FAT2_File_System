@@ -38,7 +38,6 @@ char *convertFileName(char *givenName) {
 	sizedName[MAX_FILE_NAME_SIZE] = '\0';
 
 	return sizedName; 
-
 }
 
 /*
@@ -200,11 +199,11 @@ void updateFAT(int fatIndex, char* map, int newValue) {
 	int second = newValue%100;		// Highest two digits
 	int inner = 0;						// Used if the link being freed has a link to another
 									// 	block
-
 	// Check if freeing block and if there is a link
-	if (first == 99 && second == 99 && map[fatIndex] != 00 && map[fatIndex + 1] != 00) {
+	if ((map[fatIndex] != 00 && map[fatIndex + 1] != 00) && (map[fatIndex] != 99 && map[fatIndex + 1] != 99)) {
 		inner = map[fatIndex] * 100;	// Get the highest sig figs of link
 		inner += map[fatIndex + 1];		// Get the least sig figs of link
+
 		updateFAT(inner, map, 9999);	// Recursively call function to free next link
 	}
 
@@ -229,7 +228,6 @@ int getFATLink(int index, char* map) {
 
 	// Error check to make the index inputed is in a data block
 	if (index < SIZE_OF_FAT) {
-		printf("Index is not part of a data block\n");
 		return -1;
 	}
 
@@ -341,7 +339,7 @@ int writeHeader(struct FileHead head, char* map, int index) {
 
 	// print message is no space was found
 	if (!good) {
-		printf("No More Space in Directory: File was NOT created\n");
+		created\n");
 		return -1;
 	}
 
@@ -355,16 +353,10 @@ int writeHeader(struct FileHead head, char* map, int index) {
 				map[index+i] = head.type/k;
 				head.type %= k;
 				k /= 10;
-				printf("%d\n", map[index+i]);
-			}
-
-			// Inserting File Name
+				ng File Name
 			if (i >= 4 && i <= 15)	{
 				map[index+i] = head.name[i-4];
-				printf("Char: %c\n", head.name[i-4]);
-			}
-
-			// Inserting File Last Access Time
+				 Inserting File Last Access Time
 			if (i >= 16 && i <= 23) {
 				map[index+i] = head.lastAccess/m;
 				head.lastAccess %= m;
