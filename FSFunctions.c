@@ -339,7 +339,6 @@ int writeHeader(struct FileHead head, char* map, int index) {
 
 	// print message is no space was found
 	if (!good) {
-		created\n");
 		return -1;
 	}
 
@@ -353,10 +352,10 @@ int writeHeader(struct FileHead head, char* map, int index) {
 				map[index+i] = head.type/k;
 				head.type %= k;
 				k /= 10;
-				ng File Name
+			}
 			if (i >= 4 && i <= 15)	{
 				map[index+i] = head.name[i-4];
-				 Inserting File Last Access Time
+			}
 			if (i >= 16 && i <= 23) {
 				map[index+i] = head.lastAccess/m;
 				head.lastAccess %= m;
